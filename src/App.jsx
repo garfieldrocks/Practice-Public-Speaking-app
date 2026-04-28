@@ -788,7 +788,7 @@ useEffect(() => {
       newDays = streakDays + 1;
       setStreakDays(newDays);
       setPracticedToday(true);
-      saveStreak(newDays, today);
+      await saveStreak(newDays, today);
     }
     const topicLine = topic.split("\n")[0];
     setPhase("done");
