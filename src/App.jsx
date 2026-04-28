@@ -725,17 +725,23 @@ const handleSpin = async () => {
 
 useEffect(() => {
   const handleKey = (e) => {
-    if (e.code === "Space" && !spinning && !loadingTopic && phase === "home") {
-      e.preventDefault();
+    if (e.code !== "Space") return;
+    e.preventDefault();
+    if (phase === "home" && !spinning && !loadingTopic) {
       handleSpin();
+    } else if (phase === "ideation" && !ideationStarted) {
+      startIdeation();
+    } else if (phase === "ideation" && ideationStarted) {
+      clearInterval(timerRef.current);
+      startSpeaking();
     }
   };
   window.addEventListener("keydown", handleKey);
   return () => window.removeEventListener("keydown", handleKey);
-}, [spinning, loadingTopic, handleSpin, phase]);
+}, [spinning, loadingTopic, phase, ideationStarted]);
 useEffect(() => {
   const handleKey = (e) => {
-    if (e.code === "Space" && !spinning && !loadingTopic) {
+    if (e.code === "Space" && !spinning && !loadingTopic && phase === "home") {
       e.preventDefault();
       handleSpin();
     }
@@ -1015,9 +1021,9 @@ useEffect(() => {
         </div>
 
         {/* Spin wheel */}
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 24, position: "relative" }}>
-          <SpinWheel spinning={spinning} onSpinEnd={handleSpinEnd} accent={accent} onWheelTick={handleWheelTick} size={wheelSize} dark={dark} />
-        </div>
+        <div onClick={handleSpin} style={{ display: "flex", justifyContent: "center", marginBottom: 24, position: "relative", cursor: "pointer" }}>
+  <SpinWheel spinning={spinning} onSpinEnd={handleSpinEnd} accent={accent} onWheelTick={handleWheelTick} size={wheelSize} dark={dark} />
+</div>
 
         <button style={{ ...primaryBtn(true), opacity: spinning ? 0.6 : 1 }} onClick={handleSpin} disabled={spinning || loadingTopic}>
           {spinning ? "Spinning…" : "Find Topic →"}
